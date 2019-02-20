@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { Platform,MenuController,NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { LoginPage } from '../app/login/login.page';
 import { AuthService } from '../services/auth.service';
+import { HomePage } from '../app/home/home.page';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -21,16 +23,48 @@ export class AppComponent {
 
 
   ]
+  @ViewChild(NavController) nav: NavController;
+
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
     private auth: AuthService,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private menu: MenuController,
+    private router: Router,
+    private navCtrl: NavController
   ) {
     this.initializeApp();
   }
 
   initializeApp() {
-      this.rootPage = LoginPage;
+    this.platform.ready().then(() => {
+      this.statusBar.styleDefault();
+    });
+  
+    this.auth.afAuth.authState
+      .subscribe(
+        user => {
+          if (user) {
+            this.rootPage = HomePage;
+          } else {
+            this.rootPage = LoginPage;
+          }
+        },
+        () => {
+          this.rootPage = LoginPage;
+        }
+      );
   }
+  login() {
+    this.menu.close();
+    this.auth.signOut();
+    this.navCtrl.navigateRoot('/login')
+  }
+  logout() {
+    this.menu.close();
+    this.auth.signOut();
+    this.navCtrl.navigateRoot('/home')
+
+  } 
 }
