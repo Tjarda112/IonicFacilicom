@@ -3,9 +3,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Platform,MenuController,NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { LoginPage } from '../app/login/login.page';
 import { AuthService } from '../services/auth.service';
-import { HomePage } from '../app/home/home.page';
 import { Router } from '@angular/router';
 
 
@@ -14,13 +12,11 @@ import { Router } from '@angular/router';
   templateUrl: 'app.component.html'
 })
 export class AppComponent {
-  rootPage;
+  rootPage: any;
 
   public appMenu = [
     {title: 'Home', url: '/home', icon: 'list'},
     {title: 'Bestanden', url: '/upload', icon: 'add'},
-    {title: 'login', url: '/login', icon: 'trash'}
-
 
   ]
   @ViewChild(NavController) nav: NavController;
@@ -46,13 +42,13 @@ export class AppComponent {
       .subscribe(
         user => {
           if (user) {
-            this.rootPage = HomePage;
+            this.rootPage = this.navCtrl.navigateRoot('/home');
           } else {
-            this.rootPage = LoginPage;
+            this.rootPage = this.navCtrl.navigateRoot('/login');
           }
         },
         () => {
-          this.rootPage = LoginPage;
+          this.rootPage = this.navCtrl.navigateRoot('/login');
         }
       );
   }
